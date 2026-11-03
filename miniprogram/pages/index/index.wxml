@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="empty" wx:if="{{!loading && groups.length === 0}}">
+    暂无进行中的团购，去看看「我的」发布一个吧
+  </view>
+
+  <view
+    class="card group-card"
+    wx:for="{{groups}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    bindtap="goDetail"
+  >
+    <view class="card-main">
+      <view class="cover-wrap">
+        <image wx:if="{{item.cover}}" class="cover" src="{{item.cover}}" mode="aspectFill" />
+        <view wx:else class="cover cover-placeholder">暂无图片</view>
+      </view>
+
+      <view class="info">
+        <view class="title-row">
+          <text wx:if="{{item.is_seckill}}" class="tag">秒杀</text>
+          <text wx:if="{{item.status !== 'active'}}" class="tag tag-gray">{{item.statusText}}</text>
+          <text class="title">{{item.title}}</text>
+        </view>
+
+        <view class="desc" wx:if="{{item.productDescription}}">{{item.productDescription}}</view>
+        <view class="desc" wx:else-if="{{item.productTitle && item.productTitle !== item.title}}">{{item.productTitle}}</view>
+
+        <view class="row-between bottom-row">
+          <view class="row">
+            <view class="price">
+              <text class="price-symbol">¥</text>
+              <text class="price-num">{{item.priceText}}</text>
+            </view>
+            <text class="original-price" wx:if="{{item.originalPriceText}}">¥{{item.originalPriceText}}</text>
+          </view>
+          <text class="muted">已售 {{item.sold}}</text>
+        </view>
+
+        <view class="row-between footer-row" wx:if="{{item.status === 'active'}}">
+          <view class="row">
+            <text class="countdown" wx:if="{{item.countdownText}}">{{item.countdownText}} 截团</text>
+            <text class="muted stock" wx:if="{{item.stock > 0}}">库存 {{item.stock}}{{item.limitPerUser > 0 ? ' · 限购' + item.limitPerUser : ''}}</text>
+          </view>
+          <view class="buy-btn">去参团</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

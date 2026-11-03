@@ -1,0 +1,30 @@
+.status {
+  color: #ff5000;
+  font-size: 26rpx;
+}
+
+.order-body {
+  margin: 20rpx 0;
+}
+
+.order-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.verify-code {
+  background: #fff8e6;
+  color: #b26a00;
+  border-radius: 10rpx;
+  padding: 14rpx 20rpx;
+  font-size: 26rpx;
+  margin-bottom: 16rpx;
+}
+
+.action-row {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1rpx solid #f2f2f2;
+  padding-top: 16rpx;
+}

@@ -1,0 +1,65 @@
+<view class="container">
+  <view class="empty" wx:if="{{!loading && orders.length === 0}}">暂无相关订单</view>
+
+  <view class="card" wx:for="{{orders}}" wx:key="id">
+    <view class="row-between">
+      <text class="muted">订单号 {{item.order_no}}</text>
+      <text class="status">{{item.statusText}}</text>
+    </view>
+
+    <view class="row-between order-body">
+      <view>
+        <view class="order-title" wx:if="{{item.group_title || (item.group && item.group.title)}}">
+          {{item.group_title || item.group.title}}
+        </view>
+        <text class="muted">
+          {{item.isPickup ? '自提' : '快递'}} · x{{item.quantity}} · {{item.createdText}}
+        </text>
+        <view class="muted" wx:if="{{item.buyer_nickname || (item.buyer && item.buyer.nickname)}}">
+          买家：{{item.buyer_nickname || item.buyer.nickname}}
+        </view>
+        <view class="muted" wx:if="{{item.isPickup}}">核销码：{{item.order_no}}</view>
+        <view class="muted addr" wx:if="{{!item.isPickup && item.addressText}}">{{item.addressText}}</view>
+      </view>
+      <view class="price">
+        <text class="price-symbol">¥</text>
+        <text class="price-num">{{item.payText}}</text>
+      </view>
+    </view>
+
+    <!-- 发货单号输入 -->
+    <view class="ship-box" wx:if="{{shipOrderId === item.id}}">
+      <input
+        class="form-input ship-input"
+        placeholder="输入快递单号"
+        value="{{trackingNo}}"
+        bindinput="onTrackingInput"
+      />
+      <view class="btn-small primary" bindtap="onShip">确认发货</view>
+    </view>
+
+    <view class="action-row">
+      <!-- 已支付 + 快递 → 发货 -->
+      <view
+        class="btn-small primary"
+        wx:if="{{item.status === 'paid' && !item.isPickup}}"
+        data-id="{{item.id}}"
+        bindtap="onShowShipInput"
+      >{{shipOrderId === item.id ? '收起' : '快递发货'}}</view>
+      <!-- 已支付 + 自提 → 核销 -->
+      <view
+        class="btn-small primary"
+        wx:if="{{item.status === 'paid' && item.isPickup}}"
+        data-id="{{item.id}}"
+        bindtap="onConfirmPickup"
+      >自提核销</view>
+      <!-- 退款审批 -->
+      <view
+        class="btn-small danger"
+        wx:if="{{item.status === 'refund_requested'}}"
+        data-id="{{item.id}}"
+        bindtap="onApproveRefund"
+      >同意退款</view>
+    </view>
+  </view>
+</view>

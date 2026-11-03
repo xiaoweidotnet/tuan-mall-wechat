@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="empty" wx:if="{{!loading && orders.length === 0}}">还没有订单，去首页逛逛吧</view>
+
+  <view class="card" wx:for="{{orders}}" wx:key="id">
+    <view class="row-between">
+      <text class="muted">订单号 {{item.order_no}}</text>
+      <text class="status">{{item.statusText}}</text>
+    </view>
+
+    <view class="row-between order-body">
+      <view>
+        <view class="order-title" wx:if="{{item.group_title || (item.group && item.group.title)}}">
+          {{item.group_title || item.group.title}}
+        </view>
+        <text class="muted">
+          {{item.isPickup ? '自提' : '快递'}} · x{{item.quantity}} · {{item.createdText}}
+        </text>
+      </view>
+      <view class="price">
+        <text class="price-symbol">¥</text>
+        <text class="price-num">{{item.payText}}</text>
+      </view>
+    </view>
+
+    <!-- 自提取货码 -->
+    <view class="verify-code" wx:if="{{item.status === 'paid' && item.isPickup}}">
+      核销码：{{item.order_no}}（出示给团长取货）
+    </view>
+
+    <view class="action-row">
+      <!-- 待支付 -->
+      <block wx:if="{{item.status === 'pending'}}">
+        <view class="btn-small" data-id="{{item.id}}" bindtap="onCancel">取消订单</view>
+        <view class="btn-small primary" data-id="{{item.id}}" bindtap="onPay">去支付</view>
+      </block>
+      <!-- 已支付 -->
+      <block wx:if="{{item.status === 'paid'}}">
+        <view class="btn-small danger" data-id="{{item.id}}" bindtap="onRefund">申请退款</view>
+      </block>
+      <!-- 已发货 -->
+      <block wx:if="{{item.status === 'shipped'}}">
+        <view class="btn-small primary" data-id="{{item.id}}" bindtap="onConfirmReceipt">确认收货</view>
+      </block>
+    </view>
+  </view>
+</view>

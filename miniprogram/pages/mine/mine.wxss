@@ -1,0 +1,82 @@
+.mine-page {
+  padding: 20rpx;
+}
+
+.user-card {
+  background: linear-gradient(135deg, #ff5000, #ff8a00);
+  border-radius: 16rpx;
+  padding: 40rpx 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.edit-profile {
+  color: #fff;
+  font-size: 24rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  border-radius: 30rpx;
+  padding: 8rpx 24rpx;
+}
+
+.avatar {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  background: #fff;
+}
+
+.avatar-placeholder {
+  color: #ff5000;
+  font-size: 48rpx;
+  font-weight: bold;
+  text-align: center;
+  line-height: 110rpx;
+}
+
+.nickname {
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.user-card .muted {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.menu-card {
+  padding: 0 24rpx;
+}
+
+.menu-title {
+  font-weight: 600;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f2f2f2;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #f7f7f7;
+  font-size: 28rpx;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.arrow {
+  color: #ccc;
+  font-size: 36rpx;
+}
+
+.logout-btn {
+  margin-top: 60rpx;
+  background: #fff;
+  color: #e64340;
+}

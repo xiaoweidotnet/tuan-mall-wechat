@@ -1,0 +1,37 @@
+<view class="profile-page">
+  <view class="page-tip">完善头像和昵称，邻居们才能认出你</view>
+
+  <!-- 头像 -->
+  <view class="card avatar-card">
+    <view class="avatar-wrap">
+      <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" wx:if="{{avatarUrl}}" />
+      <view class="avatar avatar-placeholder" wx:else>头像</view>
+    </view>
+    <!-- 微信头像填写能力（基础库 2.21.2+，回调拿本地临时路径后再上传） -->
+    <button
+      class="avatar-btn"
+      open-type="chooseAvatar"
+      bindchooseavatar="onChooseAvatar"
+    >
+      使用微信头像
+    </button>
+    <view class="link-album" bindtap="onPickFromAlbum">从相册选择</view>
+  </view>
+
+  <!-- 昵称 -->
+  <view class="card form-card">
+    <view class="form-label">昵称</view>
+    <input
+      class="form-input"
+      type="nickname"
+      placeholder="请输入昵称（最多 20 字）"
+      value="{{nickname}}"
+      maxlength="20"
+      bindinput="onNicknameInput"
+      confirm-type="done"
+    />
+    <view class="btn-primary save-btn {{saving ? 'disabled' : ''}}" bindtap="onSave">
+      {{saving ? '保存中...' : '保存并进入'}}
+    </view>
+  </view>
+</view>

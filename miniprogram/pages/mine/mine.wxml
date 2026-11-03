@@ -1,0 +1,43 @@
+<view class="mine-page">
+  <!-- 用户信息 -->
+  <view class="user-card">
+    <view class="row">
+      <image
+        class="avatar"
+        src="{{user.avatar_display}}"
+        mode="aspectFill"
+        wx:if="{{user.avatar_url}}"
+      />
+      <view class="avatar avatar-placeholder" wx:else>
+        {{user && user.nickname ? user.nickname[0] : '客'}}
+      </view>
+      <view>
+        <view class="nickname">{{user.nickname || '未登录'}}</view>
+        <view class="muted">ID: {{user.id || '-'}}</view>
+      </view>
+    </view>
+    <view class="edit-profile" bindtap="go" data-url="/pages/profile/profile">编辑资料</view>
+  </view>
+
+  <!-- 团长中心 -->
+  <view class="card menu-card">
+    <view class="menu-title">团长中心</view>
+    <view class="menu-item" data-url="/pages/leader/products" bindtap="go">
+      <text>商品管理</text><text class="arrow">›</text>
+    </view>
+    <view class="menu-item" data-url="/pages/leader/publish" bindtap="go">
+      <text>发布团购</text><text class="arrow">›</text>
+    </view>
+    <view class="menu-item" data-url="/pages/leader/groups" bindtap="go">
+      <text>我发起的团购</text><text class="arrow">›</text>
+    </view>
+    <view class="menu-item" data-url="/pages/leader/orders" bindtap="go">
+      <text>团长订单管理</text><text class="arrow">›</text>
+    </view>
+    <view class="menu-item" data-url="/pages/leader/pickup" bindtap="go">
+      <text>自提点管理</text><text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="btn-primary logout-btn" bindtap="onLogout">退出登录</view>
+</view>

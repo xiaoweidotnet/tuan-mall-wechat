@@ -1,0 +1,164 @@
+<view class="page" wx:if="{{group}}">
+  <!-- 商品图文 -->
+  <view class="card">
+    <swiper
+      wx:if="{{group.product.images.length}}"
+      class="banner"
+      indicator-dots="{{group.product.images.length > 1}}"
+      indicator-color="rgba(255,255,255,0.4)"
+      indicator-active-color="#ffffff"
+      autoplay
+      circular
+    >
+      <swiper-item wx:for="{{group.product.images}}" wx:key="*this">
+        <image class="main-image" src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+    <view class="title-row">
+      <text wx:if="{{group.is_seckill}}" class="tag">秒杀</text>
+      <text class="title">{{group.title}}</text>
+    </view>
+    <view class="muted product-title" wx:if="{{group.product.title && group.product.title !== group.title}}">{{group.product.title}}</view>
+    <view class="row">
+      <view class="price">
+        <text class="price-symbol">¥</text>
+        <text class="price-num">{{priceText}}</text>
+      </view>
+      <text class="original-price" wx:if="{{originalPriceText}}">¥{{originalPriceText}}</text>
+      <text class="muted sold">已售 {{sold}}</text>
+    </view>
+    <view class="meta-row">
+      <text class="meta-item" wx:if="{{stock > 0}}">库存 {{stock}} 件</text>
+      <text class="meta-item" wx:if="{{limitPerUser > 0}}">每人限购 {{limitPerUser}} 件</text>
+      <text class="meta-item" wx:if="{{group.target_quantity > 0}}">成团目标 {{group.target_quantity}} 件</text>
+    </view>
+    <rich-text wx:if="{{group.product.description}}" class="desc" nodes="{{group.product.description}}" />
+  </view>
+
+  <!-- 商品详情图 -->
+  <view class="card" wx:if="{{group.product.detail_images.length}}">
+    <view class="section-title">商品详情</view>
+    <image
+      wx:for="{{group.product.detail_images}}"
+      wx:key="*this"
+      class="detail-image"
+      src="{{item}}"
+      mode="widthFix"
+      lazy-load
+    />
+  </view>
+
+  <!-- 秒杀/结束倒计时 -->
+  <view class="card notice-card" wx:if="{{group.status === 'active'}}">
+    <view wx:if="{{group.is_seckill && seckillNotStart}}" class="notice">
+      秒杀将于 {{seckillStartText}} 开始
+    </view>
+    <view wx:else class="notice">{{countdownText}} 截团</view>
+  </view>
+  <view class="card notice-card" wx:else>
+    <view class="notice ended">该团购已结束</view>
+  </view>
+
+  <!-- 满减规则 -->
+  <view class="card" wx:if="{{rulesText}}">
+    <view class="section-title">满减优惠</view>
+    <view class="muted">{{rulesText}}（提交时自动抵扣）</view>
+  </view>
+
+  <!-- 下单面板 -->
+  <view class="card" wx:if="{{group.status === 'active'}}">
+    <view class="section-title">下单</view>
+
+    <view class="row-between panel-row">
+      <text>购买数量</text>
+      <view class="stepper">
+        <view class="stepper-btn" bindtap="onMinus">-</view>
+        <input class="stepper-input" type="number" value="{{quantity}}" bindblur="onQuantityInput" />
+        <view class="stepper-btn" bindtap="onPlus">+</view>
+      </view>
+    </view>
+
+    <view class="panel-row">
+      <view class="panel-label">履约方式</view>
+      <view class="method-list">
+        <view
+          wx:for="{{deliveryMethods}}"
+          wx:key="*this"
+          class="method-item {{deliveryMethod === item ? 'active' : ''}}"
+          data-method="{{item}}"
+          bindtap="onMethodChange"
+        >
+          {{item === 'express' ? '快递配送' : '自提'}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 快递地址 -->
+    <block wx:if="{{deliveryMethod === 'express'}}">
+      <view class="panel-row">
+        <view class="panel-label">收货人</view>
+        <input class="form-input" placeholder="姓名" data-field="name" bindinput="onAddressInput" />
+      </view>
+      <view class="panel-row">
+        <view class="panel-label">手机号</view>
+        <input class="form-input" type="number" placeholder="联系电话" data-field="phone" bindinput="onAddressInput" />
+      </view>
+      <view class="panel-row">
+        <view class="panel-label">详细地址</view>
+        <textarea class="form-input addr-input" placeholder="省市区 + 详细地址" data-field="detail" bindinput="onAddressInput" />
+      </view>
+    </block>
+
+    <!-- 自提点选择 -->
+    <view class="panel-row" wx:if="{{deliveryMethod === 'pickup'}}">
+      <view class="panel-label">自提点</view>
+      <picker
+        wx:if="{{pickupPoints.length > 0}}"
+        mode="selector"
+        range="{{pickupPoints}}"
+        range-key="name"
+        value="{{pickupIndex}}"
+        bindchange="onPickupChange"
+      >
+        <view class="picker-value">
+          {{pickupIndex >= 0 ? pickupPoints[pickupIndex].name + '（' + pickupPoints[pickupIndex].address + '）' : '请选择自提点'}}
+        </view>
+      </picker>
+      <view class="muted" wx:else>暂无自提点，请联系团长添加</view>
+    </view>
+
+    <!-- 金额预览 -->
+    <view class="amount-box">
+      <view class="row-between amount-row">
+        <text class="muted">商品金额</text>
+        <text>¥{{totalText}}</text>
+      </view>
+      <view class="row-between amount-row" wx:if="{{reductionText}}">
+        <text class="muted">满减预估</text>
+        <text class="price">-¥{{reductionText}}</text>
+      </view>
+      <view class="row-between amount-row">
+        <text class="muted">预估应付</text>
+        <view class="price">
+          <text class="price-symbol">¥</text>
+          <text class="price-num">{{payText}}</text>
+        </view>
+      </view>
+      <view class="muted amount-tip" wx:if="{{rulesText && !reductionText}}">再买一些可享受满减优惠</view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部提交栏 -->
+<view class="submit-bar" wx:if="{{group && group.status === 'active'}}">
+  <view class="price">
+    <text class="price-symbol">¥</text>
+    <text class="price-num">{{payText}}</text>
+  </view>
+  <view
+    class="submit-btn {{(submitting || seckillNotStart) ? 'disabled' : ''}}"
+    bindtap="submitOrder"
+  >
+    {{seckillNotStart ? '秒杀未开始' : (submitting ? '提交中...' : '立即购买')}}
+  </view>
+</view>

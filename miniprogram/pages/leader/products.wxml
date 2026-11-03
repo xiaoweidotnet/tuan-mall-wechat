@@ -1,0 +1,96 @@
+<view class="container">
+  <view class="empty" wx:if="{{!loading && products.length === 0}}">还没有商品，点击下方新建</view>
+
+  <view class="card" wx:for="{{products}}" wx:key="id">
+    <view class="row-between">
+      <view class="row product-head">
+        <image wx:if="{{item.thumb}}" class="thumb" src="{{item.thumb}}" mode="aspectFill" />
+        <view class="title-wrap">
+          <text class="title">{{item.title}}</text>
+        </view>
+      </view>
+      <text class="status status-{{item.status}}">{{item.statusText}}</text>
+    </view>
+
+    <view class="row info-row">
+      <text class="price">¥{{item.priceText}}</text>
+      <text class="original-price" wx:if="{{item.originalPriceText}}">¥{{item.originalPriceText}}</text>
+    </view>
+    <view class="muted">
+      库存 {{item.stock}}{{item.limit_per_user > 0 ? ' · 每人限购 ' + item.limit_per_user : ' · 不限购'}}
+    </view>
+
+    <view class="action-row">
+      <view class="btn-small" data-id="{{item.id}}" bindtap="onEdit">编辑</view>
+      <view
+        class="btn-small {{item.status === 'on' ? 'danger' : 'primary'}}"
+        data-id="{{item.id}}"
+        data-status="{{item.status}}"
+        bindtap="onToggleStatus"
+      >{{item.status === 'on' ? '下架' : '上架'}}</view>
+      <view class="btn-small primary" data-id="{{item.id}}" bindtap="goPublish">去开团</view>
+    </view>
+  </view>
+
+  <!-- 新建/编辑表单 -->
+  <block wx:if="{{showForm}}">
+    <view class="section-title">{{editingId ? '编辑商品' : '新建商品'}}</view>
+    <view class="form-card">
+      <view class="form-item">
+        <text class="form-label">商品名称 *</text>
+        <input class="form-input" placeholder="如：山东红富士苹果 5 斤装" value="{{form.title}}" data-field="title" bindinput="onFormInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">商品描述</text>
+        <textarea class="form-input desc-input" placeholder="商品卖点、规格、产地等" value="{{form.description}}" data-field="description" bindinput="onFormInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">商品图片（最多 9 张）</text>
+        <view class="img-grid">
+          <view class="img-item" wx:for="{{form.images}}" wx:key="*this">
+            <image class="img-thumb" src="{{item}}" mode="aspectFill" />
+            <view class="img-del" data-field="images" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+          </view>
+          <view class="img-add" wx:if="{{form.images.length < 9}}" data-field="images" bindtap="onAddImage">+</view>
+        </view>
+      </view>
+      <view class="form-item">
+        <text class="form-label">详情图（最多 9 张）</text>
+        <view class="img-grid">
+          <view class="img-item" wx:for="{{form.detail_images}}" wx:key="*this">
+            <image class="img-thumb" src="{{item}}" mode="aspectFill" />
+            <view class="img-del" data-field="detail_images" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+          </view>
+          <view class="img-add" wx:if="{{form.detail_images.length < 9}}" data-field="detail_images" bindtap="onAddImage">+</view>
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <text class="form-label">价格（元）*</text>
+          <input class="form-input" type="digit" placeholder="0.00" value="{{form.price}}" data-field="price" bindinput="onFormInput" />
+        </view>
+        <view class="form-item half">
+          <text class="form-label">划线价（元）</text>
+          <input class="form-input" type="digit" placeholder="0.00" value="{{form.original_price}}" data-field="original_price" bindinput="onFormInput" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <text class="form-label">库存 *</text>
+          <input class="form-input" type="number" placeholder="0" value="{{form.stock}}" data-field="stock" bindinput="onFormInput" />
+        </view>
+        <view class="form-item half">
+          <text class="form-label">每人限购（0 不限）</text>
+          <input class="form-input" type="number" placeholder="0" value="{{form.limit_per_user}}" data-field="limit_per_user" bindinput="onFormInput" />
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-primary submit {{submitting ? 'disabled' : ''}}" bindtap="onSubmitForm">
+      {{submitting ? '提交中...' : (editingId ? '保存修改' : '创建商品')}}
+    </view>
+    <view class="btn-cancel" bindtap="onCancelForm">取消</view>
+  </block>
+
+  <view class="btn-primary new-btn" wx:if="{{!showForm}}" bindtap="onNewProduct">新建商品</view>
+</view>

@@ -1,0 +1,24 @@
+.section-title {
+  font-weight: 600;
+  margin: 24rpx 8rpx 16rpx;
+}
+
+.point-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.form-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx 24rpx;
+}
+
+.form-item {
+  padding: 20rpx 0;
+}
+
+.add-btn {
+  margin: 40rpx 0 60rpx;
+}

@@ -1,0 +1,179 @@
+<view class="container">
+  <!-- 团购商品 -->
+  <view class="section-title">团购商品</view>
+
+  <!-- 已选商品卡片 -->
+  <view class="card" wx:if="{{selectedProduct}}">
+    <view class="row">
+      <image wx:if="{{selectedProduct.thumb}}" class="product-thumb" src="{{selectedProduct.thumb}}" mode="aspectFill" />
+      <view class="product-info">
+        <view class="product-title">{{selectedProduct.title}}</view>
+        <view class="row product-price-row">
+          <text class="price">¥{{selectedProduct.priceText}}</text>
+          <text class="original-price" wx:if="{{selectedProduct.originalPriceText}}">¥{{selectedProduct.originalPriceText}}</text>
+        </view>
+        <view class="muted">{{selectedProduct.stockText}}</view>
+      </view>
+    </view>
+    <view class="selected-actions">
+      <view class="btn-small primary" bindtap="onOpenPicker">换商品</view>
+      <view class="btn-small danger" bindtap="onRemoveSelected">移除</view>
+    </view>
+  </view>
+
+  <!-- 未选商品：从商品库选择 / 新建商品 -->
+  <block wx:else>
+    <view class="row source-row">
+      <view class="method-item" bindtap="onOpenPicker">从商品库选择</view>
+      <view class="method-item {{showProductForm ? 'active' : ''}}" bindtap="onNewProduct">新建商品</view>
+    </view>
+
+    <!-- 内联新建商品表单 -->
+    <view class="form-card" wx:if="{{showProductForm}}">
+      <view class="form-item">
+        <text class="form-label">商品名称 *</text>
+        <input class="form-input" placeholder="如：山东红富士苹果 5 斤装" value="{{product.title}}" data-field="title" bindinput="onProductInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">商品图片（最多 9 张）</text>
+        <view class="img-grid">
+          <view class="img-item" wx:for="{{product.images}}" wx:key="*this">
+            <image class="img-thumb" src="{{item}}" mode="aspectFill" />
+            <view class="img-del" data-field="images" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+          </view>
+          <view class="img-add" wx:if="{{product.images.length < 9}}" data-field="images" bindtap="onAddImage">+</view>
+        </view>
+      </view>
+      <view class="form-item">
+        <text class="form-label">商品描述</text>
+        <textarea class="form-input desc-input" placeholder="商品卖点、规格、产地等" value="{{product.description}}" data-field="description" bindinput="onProductInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">详情图（最多 9 张）</text>
+        <view class="img-grid">
+          <view class="img-item" wx:for="{{product.detail_images}}" wx:key="*this">
+            <image class="img-thumb" src="{{item}}" mode="aspectFill" />
+            <view class="img-del" data-field="detail_images" data-index="{{index}}" catchtap="onRemoveImage">×</view>
+          </view>
+          <view class="img-add" wx:if="{{product.detail_images.length < 9}}" data-field="detail_images" bindtap="onAddImage">+</view>
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <text class="form-label">价格（元）*</text>
+          <input class="form-input" type="digit" placeholder="0.00" value="{{product.price}}" data-field="price" bindinput="onProductInput" />
+        </view>
+        <view class="form-item half">
+          <text class="form-label">划线价（元）</text>
+          <input class="form-input" type="digit" placeholder="0.00" value="{{product.original_price}}" data-field="original_price" bindinput="onProductInput" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <text class="form-label">库存 *</text>
+          <input class="form-input" type="number" placeholder="0" value="{{product.stock}}" data-field="stock" bindinput="onProductInput" />
+        </view>
+        <view class="form-item half">
+          <text class="form-label">每人限购（0 不限）</text>
+          <input class="form-input" type="number" placeholder="0" value="{{product.limit_per_user}}" data-field="limit_per_user" bindinput="onProductInput" />
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 团购设置 -->
+  <view class="section-title">团购设置</view>
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">截团时间 *</text>
+      <view class="row">
+        <picker mode="date" bindchange="onEndDate">
+          <view class="picker-box">{{endDate || '选择日期'}}</view>
+        </picker>
+        <picker mode="time" bindchange="onEndTime">
+          <view class="picker-box">{{endTime || '选择时间'}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">成团目标数量（0 不设目标）</text>
+      <input class="form-input" type="number" placeholder="0" data-field="targetQuantity" bindinput="onFieldInput" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">履约方式 *（可多选）</text>
+      <view class="row">
+        <view
+          wx:for="{{methods}}"
+          wx:key="value"
+          class="method-item {{item.checked ? 'active' : ''}}"
+          data-index="{{index}}"
+          bindtap="onMethodToggle"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="form-item row-between">
+      <text class="form-label switch-label">秒杀活动</text>
+      <switch checked="{{isSeckill}}" color="#ff5000" bindchange="onSeckillToggle" />
+    </view>
+
+    <view class="form-item" wx:if="{{isSeckill}}">
+      <text class="form-label">秒杀开始时间 *</text>
+      <view class="row">
+        <picker mode="date" bindchange="onSeckillDate">
+          <view class="picker-box">{{seckillDate || '选择日期'}}</view>
+        </picker>
+        <picker mode="time" bindchange="onSeckillTime">
+          <view class="picker-box">{{seckillTime || '选择时间'}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">满减规则（可选，填一档）</text>
+      <view class="row">
+        <input class="form-input rule-input" type="digit" placeholder="满（元）" data-field="ruleThreshold" bindinput="onFieldInput" />
+        <text class="rule-sep">减</text>
+        <input class="form-input rule-input" type="digit" placeholder="减（元）" data-field="ruleReduction" bindinput="onFieldInput" />
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-primary submit {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+    {{submitting ? '提交中...' : (selectedProduct ? '发起团购' : '发布商品并开团')}}
+  </view>
+
+  <!-- 商品库选择弹层 -->
+  <view class="picker-mask" wx:if="{{showProductPicker}}" bindtap="onClosePicker">
+    <view class="picker-panel" catchtap="noop">
+      <view class="picker-header row-between">
+        <text class="picker-title">选择商品</text>
+        <view class="picker-close" bindtap="onClosePicker">×</view>
+      </view>
+      <scroll-view scroll-y class="picker-list">
+        <view class="picker-empty muted" wx:if="{{!pickerLoading && pickerProducts.length === 0}}">暂无在售商品，可先新建</view>
+        <view
+          class="picker-item row"
+          wx:for="{{pickerProducts}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onPickProduct"
+        >
+          <image wx:if="{{item.thumb}}" class="product-thumb" src="{{item.thumb}}" mode="aspectFill" />
+          <view class="product-info">
+            <view class="product-title">{{item.title}}</view>
+            <view class="row product-price-row">
+              <text class="price">¥{{item.priceText}}</text>
+              <text class="original-price" wx:if="{{item.originalPriceText}}">¥{{item.originalPriceText}}</text>
+            </view>
+            <view class="muted">{{item.stockText}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

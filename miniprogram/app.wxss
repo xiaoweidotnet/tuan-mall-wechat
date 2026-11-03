@@ -1,0 +1,175 @@
+page {
+  background: #f6f6f6;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.container {
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.price {
+  color: #ff5000;
+  font-weight: bold;
+}
+
+.price-symbol {
+  font-size: 24rpx;
+}
+
+.price-num {
+  font-size: 36rpx;
+}
+
+.original-price {
+  color: #999;
+  font-size: 24rpx;
+  text-decoration: line-through;
+  margin-left: 12rpx;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 20rpx;
+  color: #fff;
+  background: linear-gradient(90deg, #ff5000, #ff8a00);
+  border-radius: 6rpx;
+  padding: 2rpx 12rpx;
+  margin-right: 12rpx;
+}
+
+.tag-gray {
+  background: #999;
+}
+
+.muted {
+  color: #999;
+  font-size: 24rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #ff5000, #ff8a00);
+  color: #fff;
+  border-radius: 44rpx;
+  text-align: center;
+  padding: 22rpx 0;
+  font-size: 30rpx;
+}
+
+.btn-primary.disabled {
+  background: #ccc;
+}
+
+.btn-small {
+  display: inline-block;
+  font-size: 24rpx;
+  border-radius: 30rpx;
+  padding: 8rpx 28rpx;
+  margin-left: 16rpx;
+  border: 1rpx solid #ddd;
+  color: #666;
+}
+
+.btn-small.primary {
+  border-color: #ff5000;
+  color: #ff5000;
+}
+
+.btn-small.danger {
+  border-color: #e64340;
+  color: #e64340;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-item {
+  background: #fff;
+  padding: 24rpx;
+  margin-bottom: 2rpx;
+}
+
+.form-label {
+  color: #666;
+  margin-bottom: 12rpx;
+  display: block;
+  font-size: 26rpx;
+}
+
+.form-input {
+  background: #f7f7f7;
+  border-radius: 10rpx;
+  padding: 18rpx 20rpx;
+  font-size: 28rpx;
+}
+
+.empty {
+  text-align: center;
+  color: #999;
+  padding: 120rpx 0;
+  font-size: 26rpx;
+}
+
+/* 图片九宫格（发布团购 / 商品管理表单共用） */
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.img-item {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin: 0 16rpx 16rpx 0;
+}
+
+.img-thumb {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 10rpx;
+  background: #f0f0f0;
+}
+
+.img-del {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 32rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 26rpx;
+}
+
+.img-add {
+  width: 160rpx;
+  height: 160rpx;
+  border: 1rpx dashed #ccc;
+  border-radius: 10rpx;
+  color: #999;
+  font-size: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+  box-sizing: border-box;
+}

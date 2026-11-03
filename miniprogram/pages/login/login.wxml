@@ -1,0 +1,30 @@
+<view class="login-page">
+  <view class="logo-area">
+    <view class="logo">团</view>
+    <view class="app-name">团购商城</view>
+    <view class="slogan">邻里团购 · 好物拼着买</view>
+  </view>
+
+  <!-- 微信授权登录（主入口）：授权后需完善头像/昵称 -->
+  <view class="btn-wechat login-btn {{loading ? 'disabled' : ''}}" bindtap="onWechatLogin">
+    {{loading ? '登录中...' : '微信授权登录'}}
+  </view>
+  <view class="login-tip">新用户授权后请完善头像和昵称</view>
+
+  <!-- 开发用模拟登录（保留：本地无微信密钥时快速体验） -->
+  <view class="mock-divider"><text class="mock-divider-text">开发模拟登录</text></view>
+  <view class="login-card">
+    <view class="form-label">昵称</view>
+    <input
+      class="form-input"
+      placeholder="输入昵称即可登录（模拟微信授权）"
+      value="{{nickname}}"
+      bindinput="onInput"
+      confirm-type="done"
+      bindconfirm="onLogin"
+    />
+    <view class="btn-primary login-btn {{loading ? 'disabled' : ''}}" bindtap="onLogin">
+      {{loading ? '登录中...' : '一键登录'}}
+    </view>
+  </view>
+</view>

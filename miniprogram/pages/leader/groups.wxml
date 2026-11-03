@@ -1,0 +1,98 @@
+<view class="container">
+  <view class="empty" wx:if="{{!loading && groups.length === 0}}">还没有发起过团购</view>
+
+  <view class="card" wx:for="{{groups}}" wx:key="id">
+    <view class="row-between group-head">
+      <view class="row title-wrap">
+        <image wx:if="{{item.cover}}" class="thumb" src="{{item.cover}}" mode="aspectFill" />
+        <view wx:else class="thumb thumb-placeholder">暂无图片</view>
+        <view class="title-col">
+          <view class="row">
+            <text wx:if="{{item.is_seckill}}" class="tag">秒杀</text>
+            <text class="title">{{item.title}}</text>
+          </view>
+        </view>
+      </view>
+      <text class="status status-{{item.status}}">{{item.statusText}}</text>
+    </view>
+
+    <view class="row-between info-row">
+      <text class="price">¥{{item.priceText}}</text>
+      <text class="muted">
+        已售 {{item.sold}}{{item.target_quantity > 0 ? ' / 目标 ' + item.target_quantity : ''}}
+      </text>
+    </view>
+    <view class="muted">截团时间 {{item.endText}}</view>
+
+    <view class="action-row">
+      <view class="btn-small" data-id="{{item.id}}" bindtap="goOrders">订单管理</view>
+      <view
+        class="btn-small primary"
+        wx:if="{{item.status === 'active'}}"
+        data-id="{{item.id}}"
+        bindtap="onEdit"
+      >编辑</view>
+      <view
+        class="btn-small danger"
+        wx:if="{{item.status === 'active'}}"
+        data-id="{{item.id}}"
+        bindtap="onClose"
+      >手动截团</view>
+    </view>
+  </view>
+
+  <view class="btn-primary publish-btn" bindtap="goPublish">发布新团购</view>
+
+  <!-- 编辑团购弹层（仅 active 团购） -->
+  <view class="modal-mask" wx:if="{{showEdit}}" bindtap="onEditCancel">
+    <view class="modal" catchtap="noop">
+      <view class="modal-title">编辑团购</view>
+
+      <view class="modal-item">
+        <text class="form-label">截团时间 *</text>
+        <view class="row">
+          <picker mode="date" value="{{editForm.endDate}}" bindchange="onEditEndDate">
+            <view class="picker-box">{{editForm.endDate || '选择日期'}}</view>
+          </picker>
+          <picker mode="time" value="{{editForm.endTime}}" bindchange="onEditEndTime">
+            <view class="picker-box">{{editForm.endTime || '选择时间'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="modal-item">
+        <text class="form-label">成团目标数量（0 不设目标）</text>
+        <input class="form-input" type="number" placeholder="0" value="{{editForm.targetQuantity}}" data-field="targetQuantity" bindinput="onEditInput" />
+      </view>
+
+      <view class="modal-item">
+        <text class="form-label">履约方式 *（可多选）</text>
+        <view class="row">
+          <view
+            wx:for="{{editForm.methods}}"
+            wx:key="value"
+            class="method-item {{item.checked ? 'active' : ''}}"
+            data-index="{{index}}"
+            bindtap="onEditMethodToggle"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-item">
+        <text class="form-label">满减规则（可选，填一档）</text>
+        <view class="row">
+          <input class="form-input rule-input" type="digit" placeholder="满（元）" value="{{editForm.ruleThreshold}}" data-field="ruleThreshold" bindinput="onEditInput" />
+          <text class="rule-sep">减</text>
+          <input class="form-input rule-input" type="digit" placeholder="减（元）" value="{{editForm.ruleReduction}}" data-field="ruleReduction" bindinput="onEditInput" />
+        </view>
+      </view>
+
+      <view class="btn-primary modal-submit {{submitting ? 'disabled' : ''}}" bindtap="onEditSubmit">
+        {{submitting ? '提交中...' : '保存修改'}}
+      </view>
+      <view class="modal-cancel" bindtap="onEditCancel">取消</view>
+    </view>
+  </view>
+</view>

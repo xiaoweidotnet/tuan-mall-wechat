@@ -1,0 +1,31 @@
+<view class="container">
+  <!-- 自提点列表 -->
+  <view class="section-title">我的自提点（{{points.length}}）</view>
+  <view class="empty" wx:if="{{!loading && points.length === 0}}">还没有自提点，在下方添加</view>
+  <view class="card" wx:for="{{points}}" wx:key="id">
+    <view class="point-name">{{item.name}}</view>
+    <view class="muted">{{item.address}}</view>
+    <view class="muted">联系方式：{{item.contact}}</view>
+  </view>
+
+  <!-- 新增表单 -->
+  <view class="section-title">新增自提点</view>
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">名称 *</text>
+      <input class="form-input" placeholder="如：幸福小区东门驿站" value="{{name}}" data-field="name" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">地址 *</text>
+      <input class="form-input" placeholder="详细地址" value="{{address}}" data-field="address" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">联系方式 *</text>
+      <input class="form-input" placeholder="手机号或微信号" value="{{contact}}" data-field="contact" bindinput="onInput" />
+    </view>
+  </view>
+
+  <view class="btn-primary add-btn {{submitting ? 'disabled' : ''}}" bindtap="onAdd">
+    {{submitting ? '提交中...' : '添加自提点'}}
+  </view>
+</view>

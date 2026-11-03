@@ -1,0 +1,15 @@
+{
+  "name": "tuan-mall-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WeChat group-buying mall (kuaituantuan-like) MVP backend",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,107 @@
+.section-title {
+  font-weight: 600;
+  margin: 24rpx 8rpx 16rpx;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.product-head {
+  flex: 1;
+  overflow: hidden;
+  margin-right: 16rpx;
+}
+
+.product-head .title-wrap {
+  margin-bottom: 0;
+  margin-left: 16rpx;
+}
+
+.thumb {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 10rpx;
+  background: #f0f0f0;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 30rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  font-size: 24rpx;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.status-on {
+  color: #07c160;
+}
+
+.status-off {
+  color: #999;
+}
+
+.info-row {
+  margin-bottom: 8rpx;
+}
+
+.action-row {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1rpx solid #f2f2f2;
+  padding-top: 16rpx;
+  margin-top: 16rpx;
+}
+
+.form-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.form-item {
+  padding: 20rpx 0;
+}
+
+.form-row {
+  display: flex;
+}
+
+.form-item.half {
+  flex: 1;
+}
+
+.form-item.half + .form-item.half {
+  margin-left: 20rpx;
+}
+
+.desc-input {
+  height: 140rpx;
+}
+
+.submit {
+  margin: 40rpx 0 20rpx;
+}
+
+.btn-cancel {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding: 20rpx 0 60rpx;
+}
+
+.new-btn {
+  margin: 20rpx 0 60rpx;
+}

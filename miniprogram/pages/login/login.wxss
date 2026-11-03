@@ -1,0 +1,84 @@
+.login-page {
+  padding: 40rpx;
+}
+
+.logo-area {
+  text-align: center;
+  padding: 80rpx 0 60rpx;
+}
+
+.logo {
+  width: 140rpx;
+  height: 140rpx;
+  line-height: 140rpx;
+  margin: 0 auto;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #ff5000, #ff8a00);
+  color: #fff;
+  font-size: 72rpx;
+  font-weight: bold;
+}
+
+.app-name {
+  margin-top: 24rpx;
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.slogan {
+  margin-top: 12rpx;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx 32rpx;
+}
+
+.login-btn {
+  margin-top: 40rpx;
+}
+
+/* 微信授权登录主按钮（微信绿） */
+.btn-wechat {
+  background: #07c160;
+  color: #fff;
+  border-radius: 44rpx;
+  text-align: center;
+  padding: 22rpx 0;
+  font-size: 30rpx;
+}
+
+.btn-wechat.disabled {
+  background: #9ad9b8;
+}
+
+.login-tip {
+  margin-top: 16rpx;
+  text-align: center;
+  color: #999;
+  font-size: 22rpx;
+}
+
+/* 开发模拟登录分隔线 */
+.mock-divider {
+  display: flex;
+  align-items: center;
+  margin: 60rpx 0 32rpx;
+  color: #bbb;
+  font-size: 22rpx;
+}
+
+.mock-divider::before,
+.mock-divider::after {
+  content: '';
+  flex: 1;
+  height: 1rpx;
+  background: #ddd;
+}
+
+.mock-divider-text {
+  padding: 0 24rpx;
+}

@@ -1,0 +1,164 @@
+.section-title {
+  font-weight: 600;
+  margin: 24rpx 8rpx 16rpx;
+}
+
+.form-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.form-item {
+  padding: 20rpx 0;
+}
+
+.form-row {
+  display: flex;
+}
+
+.form-item.half {
+  flex: 1;
+}
+
+.form-item.half + .form-item.half {
+  margin-left: 20rpx;
+}
+
+.desc-input {
+  height: 140rpx;
+}
+
+.picker-box {
+  background: #f7f7f7;
+  border-radius: 10rpx;
+  padding: 18rpx 30rpx;
+  margin-right: 20rpx;
+  color: #333;
+  min-width: 180rpx;
+  text-align: center;
+}
+
+.method-item {
+  border: 1rpx solid #ddd;
+  color: #666;
+  border-radius: 32rpx;
+  padding: 10rpx 32rpx;
+  font-size: 26rpx;
+  margin-right: 20rpx;
+}
+
+.method-item.active {
+  border-color: #ff5000;
+  color: #ff5000;
+  background: #fff5f0;
+}
+
+.switch-label {
+  margin-bottom: 0;
+}
+
+.rule-input {
+  flex: 1;
+}
+
+.rule-sep {
+  margin: 0 20rpx;
+  color: #666;
+}
+
+.submit {
+  margin: 40rpx 0 60rpx;
+}
+
+.product-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.product-price-row {
+  margin-bottom: 8rpx;
+}
+
+/* 团购商品区块 */
+.product-thumb {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 10rpx;
+  background: #f0f0f0;
+  flex-shrink: 0;
+}
+
+.product-info {
+  flex: 1;
+  margin-left: 20rpx;
+  overflow: hidden;
+}
+
+.selected-actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1rpx solid #f2f2f2;
+  padding-top: 16rpx;
+  margin-top: 16rpx;
+}
+
+.source-row {
+  margin: 4rpx 8rpx 20rpx;
+}
+
+/* 商品库选择弹层 */
+.picker-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.picker-panel {
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 24rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  max-height: 70vh;
+}
+
+.picker-header {
+  margin-bottom: 16rpx;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.picker-close {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  color: #999;
+  font-size: 40rpx;
+}
+
+.picker-list {
+  max-height: 56vh;
+}
+
+.picker-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f2f2f2;
+}
+
+.picker-empty {
+  text-align: center;
+  padding: 60rpx 0;
+}

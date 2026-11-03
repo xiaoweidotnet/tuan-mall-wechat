@@ -1,0 +1,68 @@
+.profile-page {
+  padding: 24rpx;
+}
+
+.page-tip {
+  text-align: center;
+  color: #999;
+  font-size: 24rpx;
+  padding: 24rpx 0 32rpx;
+}
+
+.avatar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 24rpx 32rpx;
+}
+
+.avatar-wrap {
+  margin-bottom: 32rpx;
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: #f0f0f0;
+}
+
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 28rpx;
+}
+
+/* 重置 button 默认样式，使其看起来像普通按钮 */
+.avatar-btn {
+  margin: 0;
+  padding: 0 40rpx;
+  height: 72rpx;
+  line-height: 68rpx;
+  font-size: 28rpx;
+  color: #07c160;
+  background: #fff;
+  border: 1rpx solid #07c160;
+  border-radius: 36rpx;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.link-album {
+  margin-top: 24rpx;
+  color: #999;
+  font-size: 26rpx;
+  text-decoration: underline;
+}
+
+.form-card {
+  padding: 32rpx 24rpx;
+}
+
+.save-btn {
+  margin-top: 48rpx;
+}
