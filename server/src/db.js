@@ -4,6 +4,7 @@ const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   openid TEXT NOT NULL,
+  phone TEXT,
   nickname TEXT NOT NULL,
   avatar_url TEXT DEFAULT '',
   created_at TEXT NOT NULL
@@ -64,6 +65,20 @@ CREATE TABLE IF NOT EXISTS pickup_points (
   contact TEXT DEFAULT '',
   created_at TEXT NOT NULL
 );
+
+-- 手机号登录验证码：只存 HMAC，不落明文；used_at 非空表示已一次性使用
+CREATE TABLE IF NOT EXISTS sms_codes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  phone TEXT NOT NULL,
+  code_hash TEXT NOT NULL,
+  ip TEXT DEFAULT '',
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  used_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_sms_codes_phone_created ON sms_codes(phone, created_at);
+CREATE INDEX IF NOT EXISTS idx_sms_codes_ip_created ON sms_codes(ip, created_at);
 `;
 
 function createDb(dbPath = ':memory:') {
@@ -80,6 +95,17 @@ function createDb(dbPath = ':memory:') {
   // openid 唯一索引：防止同一微信用户重复建档（老库若有重复数据则跳过）
   try {
     db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_openid ON users(openid)');
+  } catch {
+    // 历史数据重复等，忽略
+  }
+  // 轻量迁移：老库补 phone 列；手机号唯一（SQLite 唯一索引允许多个 NULL）
+  try {
+    db.exec('ALTER TABLE users ADD COLUMN phone TEXT');
+  } catch {
+    // duplicate column name，忽略
+  }
+  try {
+    db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone ON users(phone)');
   } catch {
     // 历史数据重复等，忽略
   }
