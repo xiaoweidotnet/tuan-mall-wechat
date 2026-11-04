@@ -32,6 +32,26 @@ npm test           # node:test + assert，独立 :memory: 数据库，不污染�
 - `POST /api/orders/:id/pay|cancel|refund|refund/approve|ship|confirm-pickup|confirm-receipt`
 - `GET/POST /api/pickup-points`
 
+### 秒杀
+
+- `GET /api/seckill/activities` 已发布活动列表（含 `status`、`remaining_stock`、`server_time`、商品信息）
+- `GET /api/seckill/activities/:id` 活动详情（未开始/进行中/已售罄/已结束，倒计时以 `server_time` 校准）
+- `POST /api/seckill/activities/:id/orders` `{quantity, request_id, delivery_method, address|pickup_point_id}`：秒杀下单，成功返回 201；同一用户同一活动重复提交同一 `request_id` 返回原订单 200
+- `GET /api/seckill/orders`，`GET /api/seckill/orders/:id`
+- `POST /api/seckill/orders/:id/pay|cancel`：支付幂等；取消仅限待支付，取消后释放活动库存
+- 运营接口（`x-admin-token` 保护）：
+  - `GET/POST /api/admin/seckill/activities`，`PUT /api/admin/seckill/activities/:id`
+  - `POST /api/admin/seckill/activities/:id/publish|terminate`
+  - `GET /api/admin/seckill/activities/:id/stats`（下单量、支付量、剩余库存、转化率、售罄时间、异常数、事件计数）
+  - `GET /api/admin/seckill/activities/:id/logs`（创建/修改/发布/终止及异常退款操作日志）
+
+秒杀规则要点：
+
+- 活动库存独立于商品库存，`sold` 表示已锁定数量；下单在事务内按 `sold + quantity <= stock` 条件扣减，失败即售罄，防止超卖。
+- 限购按用户在同一活动的 `pending/paid` 订单累计，取消/超时后释放额度。
+- 待支付订单超过 `pay_timeout_minutes`（默认 15 分钟）后，读取订单/活动/运营数据时惰性取消并释放库存。
+- 支付回调对秒杀订单幂等；订单已取消或超时后又收到成功通知时自动退款并记录异常，供人工核对。
+
 金额一律为整数分。
 
 ## 登录流程

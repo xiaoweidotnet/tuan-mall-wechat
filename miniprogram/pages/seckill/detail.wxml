@@ -1,0 +1,133 @@
+<view class="page" wx:if="{{activity}}">
+  <!-- 商品主图 -->
+  <view class="hero">
+    <image
+      wx:if="{{product.images[0]}}"
+      class="hero-img"
+      src="{{product.images[0]}}"
+      mode="aspectFill"
+    />
+    <view wx:else class="hero-img hero-empty">限时秒杀</view>
+    <view class="hero-badge">限时秒杀</view>
+  </view>
+
+  <!-- 商品与活动信息 -->
+  <view class="card">
+    <view class="title">{{activity.title}}</view>
+    <view class="row price-row">
+      <view class="price">
+        <text class="price-symbol">¥</text>
+        <text class="price-num">{{priceText}}</text>
+      </view>
+      <text class="original-price" wx:if="{{originalPriceText}}">¥{{originalPriceText}}</text>
+      <text class="limit-tag">每人限购 {{limitPerUser}} 件</text>
+    </view>
+    <view class="meta-row">
+      <text class="meta-item">剩余 {{remainingStock}} 件</text>
+      <text class="meta-item">活动时间 {{startText}} - {{endText}}</text>
+      <text class="meta-item">下单后 {{payTimeoutMinutes}} 分钟内支付</text>
+    </view>
+  </view>
+
+  <!-- 状态与倒计时 -->
+  <view class="card status-card">
+    <view class="row-between status-row">
+      <text class="status-text {{canBuy ? 'hot' : ''}}">{{statusText}}</text>
+      <view class="countdown" wx:if="{{countdownText}}">
+        <text class="countdown-label">{{countdownLabel}}</text>
+        <text class="countdown-num">{{countdownText}}</text>
+      </view>
+    </view>
+    <view class="status-tip">{{statusTip}}</view>
+  </view>
+
+  <!-- 抢购面板：仅在可购买时展示填写项 -->
+  <view class="card" wx:if="{{canBuy}}">
+    <view class="section-title">抢购信息</view>
+
+    <view class="panel-row row-between">
+      <text class="panel-inline-label">购买数量</text>
+      <view class="stepper">
+        <view class="stepper-btn" bindtap="onMinus">-</view>
+        <input class="stepper-input" type="number" value="{{quantity}}" bindblur="onQuantityInput" />
+        <view class="stepper-btn" bindtap="onPlus">+</view>
+      </view>
+    </view>
+
+    <view class="panel-row">
+      <view class="panel-label">履约方式</view>
+      <view class="method-list">
+        <view
+          wx:for="{{deliveryMethods}}"
+          wx:key="*this"
+          class="method-item {{deliveryMethod === item ? 'active' : ''}}"
+          data-method="{{item}}"
+          bindtap="onMethodChange"
+        >
+          {{item === 'express' ? '快递配送' : '自提'}}
+        </view>
+      </view>
+    </view>
+
+    <block wx:if="{{deliveryMethod === 'express'}}">
+      <view class="panel-row">
+        <view class="panel-label">收货人</view>
+        <input class="form-input" placeholder="姓名" data-field="name" bindinput="onAddressInput" />
+      </view>
+      <view class="panel-row">
+        <view class="panel-label">手机号</view>
+        <input class="form-input" type="number" placeholder="联系电话" data-field="phone" bindinput="onAddressInput" />
+      </view>
+      <view class="panel-row">
+        <view class="panel-label">详细地址</view>
+        <textarea class="form-input addr-input" placeholder="省市区 + 详细地址" data-field="detail" bindinput="onAddressInput" />
+      </view>
+    </block>
+
+    <view class="panel-row" wx:if="{{deliveryMethod === 'pickup'}}">
+      <view class="panel-label">自提点</view>
+      <picker
+        wx:if="{{pickupPoints.length > 0}}"
+        mode="selector"
+        range="{{pickupPoints}}"
+        range-key="name"
+        value="{{pickupIndex}}"
+        bindchange="onPickupChange"
+      >
+        <view class="picker-value">
+          {{pickupIndex >= 0 ? pickupPoints[pickupIndex].name + '（' + pickupPoints[pickupIndex].address + '）' : '请选择自提点'}}
+        </view>
+      </picker>
+      <view class="muted" wx:else>暂无自提点，请选择快递配送或联系团长</view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{!canBuy}}">
+    <view class="status-tip">{{statusTip}}</view>
+    <view class="muted rule-tip">
+      活动以服务端时间为准，提交订单时会再次校验活动状态、限购与库存。
+    </view>
+  </view>
+
+  <view class="card rule-card">
+    <view class="section-title">活动规则</view>
+    <view class="rule-item">1. 秒杀价 ¥{{priceText}}，活动库存有限，抢完即止。</view>
+    <view class="rule-item">2. 下单即锁定库存，每人限购 {{limitPerUser}} 件。</view>
+    <view class="rule-item">3. 下单后 {{payTimeoutMinutes}} 分钟内完成支付，超时订单自动取消并释放库存。</view>
+    <view class="rule-item">4. 活动商品不支持优惠券叠加与购物车合单。</view>
+  </view>
+</view>
+
+<!-- 底部抢购栏 -->
+<view class="submit-bar" wx:if="{{activity}}">
+  <view class="submit-price">
+    <text class="muted">秒杀价</text>
+    <view class="price">
+      <text class="price-symbol">¥</text>
+      <text class="price-num">{{priceText}}</text>
+    </view>
+  </view>
+  <view class="submit-btn {{disabled ? 'disabled' : ''}}" bindtap="submitOrder">
+    {{submitting ? '提交中...' : buttonText}}
+  </view>
+</view>

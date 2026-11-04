@@ -1,4 +1,36 @@
 <view class="container">
+  <!-- 限时秒杀 -->
+  <view class="seckill-section" wx:if="{{seckillList.length > 0}}">
+    <view class="seckill-head">
+      <text class="seckill-title">限时秒杀</text>
+      <text class="seckill-sub">限时限量 · 抢完即止</text>
+    </view>
+    <scroll-view class="seckill-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view
+        class="seckill-card"
+        wx:for="{{seckillList}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="goSeckill"
+      >
+        <view class="seckill-cover-wrap">
+          <image wx:if="{{item.cover}}" class="seckill-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view wx:else class="seckill-cover seckill-cover-empty">秒杀</view>
+          <view class="seckill-corner">{{item.statusText}}</view>
+        </view>
+        <view class="seckill-body">
+          <view class="seckill-name">{{item.title}}</view>
+          <view class="seckill-price-row">
+            <text class="seckill-price">¥{{item.priceText}}</text>
+            <text class="seckill-original" wx:if="{{item.originalPriceText}}">¥{{item.originalPriceText}}</text>
+          </view>
+          <view class="seckill-meta">{{item.countdownText}} · 剩 {{item.remainingStock}} 件</view>
+          <view class="seckill-btn {{item.status === 'ongoing' ? '' : 'soon'}}">{{item.buttonText}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
   <view class="empty" wx:if="{{!loading && groups.length === 0}}">
     暂无进行中的团购，去看看「我的」发布一个吧
   </view>
