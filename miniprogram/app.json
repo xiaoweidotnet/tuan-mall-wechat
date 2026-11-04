@@ -6,6 +6,7 @@
     "pages/login/login",
     "pages/profile/profile",
     "pages/group/detail",
+    "pages/seckill/detail",
     "pages/leader/publish",
     "pages/leader/products",
     "pages/leader/groups",

@@ -4,14 +4,18 @@ const util = require('../../utils/util');
 Page({
   data: {
     groups: [],
+    seckillList: [],
     loading: true
   },
 
   timer: null,
+  // 服务端时间校准：serverOffset = 服务端当前时间 - 本机当前时间
+  serverOffset: 0,
 
   onShow() {
     if (!util.requireLogin()) return;
     this.loadGroups();
+    this.loadSeckill();
     this.startTimer();
   },
 
@@ -24,7 +28,9 @@ Page({
   },
 
   onPullDownRefresh() {
-    this.loadGroups().finally(() => wx.stopPullDownRefresh());
+    Promise.all([this.loadGroups(), this.loadSeckill()]).finally(() =>
+      wx.stopPullDownRefresh()
+    );
   },
 
   async loadGroups() {
@@ -38,6 +44,58 @@ Page({
       this.setData({ loading: false });
       toastError(err);
     }
+  },
+
+  async loadSeckill() {
+    try {
+      const res = await get('/seckill/activities');
+      const list = (Array.isArray(res) ? res : res.list || []).filter(
+        (a) => a.status === 'not_started' || a.status === 'ongoing'
+      );
+      if (list.length && list[0].server_time) {
+        this.serverOffset = Date.parse(list[0].server_time) - Date.now();
+      }
+      this.setData({ seckillList: list.map((a) => this.decorateSeckill(a)) });
+    } catch (err) {
+      // 秒杀活动加载失败不阻塞团购列表
+    }
+  },
+
+  serverNow() {
+    return Date.now() + this.serverOffset;
+  },
+
+  decorateSeckill(a) {
+    const product = a.product || {};
+    const images = Array.isArray(product.images) ? product.images : [];
+    const now = this.serverNow();
+    let countdownText = '';
+    let countdownTarget = '';
+    let countdownPrefix = '';
+    if (a.status === 'not_started') {
+      countdownPrefix = '距开始 ';
+      countdownTarget = a.start_at;
+      countdownText = countdownPrefix + util.formatCountdownShort(a.start_at, now);
+    } else if (a.status === 'ongoing') {
+      countdownPrefix = '距结束 ';
+      countdownTarget = a.end_at;
+      countdownText = countdownPrefix + util.formatCountdownShort(a.end_at, now);
+    }
+    return {
+      id: a.id,
+      title: a.title || product.title || '',
+      cover: images.length ? util.resolveImageUrl(images[0]) : '',
+      priceText: util.fenToYuan(a.seckill_price),
+      originalPriceText: product.price ? util.fenToYuan(product.price) : '',
+      status: a.status,
+      statusText: a.status === 'not_started' ? '即将开始' : '抢购中',
+      buttonText: a.status === 'not_started' ? '即将开始' : '立即抢购',
+      remainingStock: a.remaining_stock || 0,
+      limitPerUser: a.limit_per_user || 0,
+      countdownText,
+      countdownTarget,
+      countdownPrefix
+    };
   },
 
   decorate(g) {
@@ -71,7 +129,14 @@ Page({
         ...g,
         countdownText: g.status === 'active' ? util.formatCountdown(g.end_at) : ''
       }));
-      this.setData({ groups });
+      const seckillList = this.data.seckillList.map((item) => ({
+        ...item,
+        countdownText: item.countdownTarget
+          ? item.countdownPrefix +
+            util.formatCountdownShort(item.countdownTarget, this.serverNow())
+          : ''
+      }));
+      this.setData({ groups, seckillList });
     }, 1000);
   },
 
@@ -85,5 +150,10 @@ Page({
   goDetail(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: '/pages/group/detail?id=' + id });
+  },
+
+  goSeckill(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({ url: '/pages/seckill/detail?id=' + id });
   }
 });

@@ -18,22 +18,35 @@ function pad2(n) {
   return n < 10 ? '0' + n : '' + n;
 }
 
-/** 剩余时间文案：>1天 "剩 x天x小时"，否则 "剩 hh:mm:ss"；已结束返回 "已结束" */
-function formatCountdown(endAt) {
+/** 剩余时间拆解；已结束返回 null。nowMs 可传服务端校准后的当前时间 */
+function countdownParts(endAt, nowMs) {
   const end = new Date(endAt).getTime();
-  if (!end) return '';
-  let diff = end - Date.now();
-  if (diff <= 0) return '已结束';
+  if (!end) return null;
+  let diff = end - (nowMs || Date.now());
+  if (diff <= 0) return null;
   const day = Math.floor(diff / 86400000);
   diff %= 86400000;
   const hour = Math.floor(diff / 3600000);
   diff %= 3600000;
   const min = Math.floor(diff / 60000);
   const sec = Math.floor((diff % 60000) / 1000);
-  if (day > 0) {
-    return '剩 ' + day + '天' + hour + '小时';
-  }
-  return '剩 ' + pad2(hour) + ':' + pad2(min) + ':' + pad2(sec);
+  return { day, hour, min, sec };
+}
+
+/** 剩余时间文案：>1天 "剩 x天x小时"，否则 "剩 hh:mm:ss"；已结束返回 "已结束" */
+function formatCountdown(endAt, nowMs) {
+  const parts = countdownParts(endAt, nowMs);
+  if (!parts) return '已结束';
+  if (parts.day > 0) return '剩 ' + parts.day + '天' + parts.hour + '小时';
+  return '剩 ' + pad2(parts.hour) + ':' + pad2(parts.min) + ':' + pad2(parts.sec);
+}
+
+/** 倒计时数值：>1天 "x天x小时"，否则 "hh:mm:ss"；已结束返回 "已结束" */
+function formatCountdownShort(endAt, nowMs) {
+  const parts = countdownParts(endAt, nowMs);
+  if (!parts) return '已结束';
+  if (parts.day > 0) return parts.day + '天' + parts.hour + '小时';
+  return pad2(parts.hour) + ':' + pad2(parts.min) + ':' + pad2(parts.sec);
 }
 
 /** 时间展示：毫秒/ISO → "MM-DD HH:mm" */
@@ -161,6 +174,7 @@ module.exports = {
   fenToYuan,
   yuanToFen,
   formatCountdown,
+  formatCountdownShort,
   formatTime,
   orderStatusText,
   groupStatusText,

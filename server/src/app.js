@@ -7,6 +7,8 @@ const wechatService = require('./services/wechat');
 const productsRouter = require('./routes/products');
 const groupsRouter = require('./routes/groups');
 const { ordersRouter, createOrderHandler } = require('./routes/orders');
+const { seckillRouter, seckillAdminRouter } = require('./routes/seckill');
+const seckillService = require('./services/seckill');
 const pickupPointsRouter = require('./routes/pickupPoints');
 const uploadsRouter = require('./routes/uploads');
 const { UPLOAD_DIR } = uploadsRouter;
@@ -82,6 +84,9 @@ function createApp(options = {}) {
     res.json(db.prepare('SELECT * FROM orders ORDER BY id DESC').all());
   });
 
+  // 运营侧秒杀活动管理（配置/发布/终止/数据/日志）
+  app.use('/api/admin/seckill', seckillAdminRouter(ctx));
+
   // 微信支付回调占位：直接信任请求体里的状态
   app.post('/api/payments/notify', (req, res) => {
     const { order_no, status = 'paid' } = req.body || {};
@@ -90,7 +95,10 @@ function createApp(options = {}) {
     }
     const order = db.prepare('SELECT * FROM orders WHERE order_no = ?').get(order_no);
     if (!order) {
-      return res.status(404).json({ error: 'order not found' });
+      // 秒杀订单：幂等处理，取消后到账自动退款
+      const seckillResult = seckillService.handlePaymentNotify(db, { orderNo: order_no, status });
+      if (!seckillResult) return res.status(404).json({ error: 'order not found' });
+      return res.json({ code: 'SUCCESS', message: 'OK' });
     }
     db.prepare('UPDATE orders SET status = ?, paid_at = ? WHERE id = ?').run(
       status,
@@ -172,6 +180,7 @@ function createApp(options = {}) {
   app.use('/api/groups', groupsRouter(ctx));
   app.post('/api/groups/:id/orders', createOrderHandler(ctx));
   app.use('/api/orders', ordersRouter(ctx));
+  app.use('/api/seckill', seckillRouter(ctx));
   app.use('/api/pickup-points', pickupPointsRouter(ctx));
   app.use('/api/uploads', uploadsRouter());
 

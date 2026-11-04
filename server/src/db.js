@@ -64,6 +64,64 @@ CREATE TABLE IF NOT EXISTS pickup_points (
   contact TEXT DEFAULT '',
   created_at TEXT NOT NULL
 );
+
+-- 秒杀活动：运营配置商品、秒杀价、活动库存、起止时间、限购与支付期限。
+-- sold 为「已占用库存」：下单即锁定，取消/超时释放，支付后保留。
+CREATE TABLE IF NOT EXISTS seckill_activities (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_id INTEGER NOT NULL REFERENCES products(id),
+  title TEXT NOT NULL,
+  seckill_price INTEGER NOT NULL,
+  stock INTEGER NOT NULL,
+  sold INTEGER NOT NULL DEFAULT 0,
+  start_at TEXT NOT NULL,
+  end_at TEXT NOT NULL,
+  limit_per_user INTEGER NOT NULL DEFAULT 1,
+  pay_timeout_minutes INTEGER NOT NULL DEFAULT 15,
+  status TEXT NOT NULL DEFAULT 'draft',
+  created_by INTEGER REFERENCES users(id),
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+-- 秒杀订单：request_id 为客户端幂等键，同一用户同一活动重复提交返回同一订单。
+CREATE TABLE IF NOT EXISTS seckill_orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_no TEXT NOT NULL UNIQUE,
+  activity_id INTEGER NOT NULL REFERENCES seckill_activities(id),
+  buyer_id INTEGER NOT NULL REFERENCES users(id),
+  quantity INTEGER NOT NULL,
+  unit_price INTEGER NOT NULL,
+  pay_amount INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  delivery_method TEXT NOT NULL DEFAULT 'express',
+  address TEXT,
+  pickup_point_id INTEGER,
+  request_id TEXT,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  paid_at TEXT,
+  cancelled_at TEXT,
+  cancel_reason TEXT
+);
+
+CREATE TABLE IF NOT EXISTS seckill_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  activity_id INTEGER NOT NULL,
+  actor TEXT NOT NULL,
+  action TEXT NOT NULL,
+  detail TEXT NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS seckill_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  activity_id INTEGER NOT NULL,
+  event_type TEXT NOT NULL,
+  user_id INTEGER,
+  detail TEXT NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL
+);
 `;
 
 function createDb(dbPath = ':memory:') {
@@ -82,6 +140,16 @@ function createDb(dbPath = ':memory:') {
     db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_openid ON users(openid)');
   } catch {
     // 历史数据重复等，忽略
+  }
+  // 秒杀下单幂等键：同一用户同一活动同一 request_id 只允许一张订单
+  try {
+    db.exec(
+      `CREATE UNIQUE INDEX IF NOT EXISTS idx_seckill_orders_request
+       ON seckill_orders(buyer_id, activity_id, request_id)
+       WHERE request_id IS NOT NULL`
+    );
+  } catch {
+    // 历史数据冲突等，忽略
   }
   return db;
 }

@@ -9,9 +9,10 @@
 
     <view class="row-between order-body">
       <view>
-        <view class="order-title" wx:if="{{item.group_title || (item.group && item.group.title)}}">
-          {{item.group_title || item.group.title}}
+        <view class="order-title" wx:if="{{item.titleText}}">
+          <text wx:if="{{item.isSeckill}}" class="tag">秒杀</text>{{item.titleText}}
         </view>
+        <view class="deadline" wx:if="{{item.payDeadlineText}}">{{item.payDeadlineText}}</view>
         <text class="muted">
           {{item.isPickup ? '自提' : '快递'}} · x{{item.quantity}} · {{item.createdText}}
         </text>
@@ -30,11 +31,11 @@
     <view class="action-row">
       <!-- 待支付 -->
       <block wx:if="{{item.status === 'pending'}}">
-        <view class="btn-small" data-id="{{item.id}}" bindtap="onCancel">取消订单</view>
-        <view class="btn-small primary" data-id="{{item.id}}" bindtap="onPay">去支付</view>
+        <view class="btn-small" data-id="{{item.id}}" data-kind="{{item.kind}}" bindtap="onCancel">取消订单</view>
+        <view class="btn-small primary" data-id="{{item.id}}" data-kind="{{item.kind}}" bindtap="onPay">去支付</view>
       </block>
-      <!-- 已支付 -->
-      <block wx:if="{{item.status === 'paid'}}">
+      <!-- 已支付（秒杀订单暂不支持自助退款，异常支付由系统退款） -->
+      <block wx:if="{{item.status === 'paid' && !item.isSeckill}}">
         <view class="btn-small danger" data-id="{{item.id}}" bindtap="onRefund">申请退款</view>
       </block>
       <!-- 已发货 -->

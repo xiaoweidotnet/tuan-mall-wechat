@@ -35,7 +35,10 @@ function request(options) {
           const msg =
             (res.data && (res.data.message || res.data.error)) ||
             '请求失败(' + res.statusCode + ')';
-          reject(new Error(msg));
+          const err = new Error(msg);
+          // 业务错误码（如 SOLD_OUT / LIMIT_EXCEEDED），页面可据此给出中文提示
+          if (res.data && res.data.code) err.code = res.data.code;
+          reject(err);
         }
       },
       fail() {
