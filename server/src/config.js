@@ -11,6 +11,10 @@ module.exports = {
     appid: 'touristappid',
     secret: 'DEMO_FAKE_WECHAT_APP_SECRET_3f9a2b7c1d8e4f60',
   },
+  sms: {
+    // 短信服务商与签名模板待确定；默认 mock，验证码只输出到服务端日志
+    provider: process.env.SMS_PROVIDER || 'mock',
+  },
   payment: {
     mchid: '1900000109',
     apiV3Key: 'DEMO_FAKE_PAY_V3_KEY_1234567890!',

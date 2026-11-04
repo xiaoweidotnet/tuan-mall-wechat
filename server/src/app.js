@@ -4,6 +4,8 @@ const { createDb, now } = require('./db');
 const { issueToken, createAuthMiddleware } = require('./auth');
 const config = require('./config');
 const wechatService = require('./services/wechat');
+const { createSmsService } = require('./services/sms');
+const { createPhoneAuthRouter } = require('./routes/phoneAuth');
 const productsRouter = require('./routes/products');
 const groupsRouter = require('./routes/groups');
 const { ordersRouter, createOrderHandler } = require('./routes/orders');
@@ -23,6 +25,9 @@ function createApp(options = {}) {
   const db = createDb(options.dbPath || ':memory:');
   const tokens = new Map(); // token -> userId
   const wechat = options.wechat || wechatService; // 测试可注入替身
+  const sms = createSmsService(
+    options.sms ? { provider: options.sms } : { providerName: config.sms.provider }
+  ); // 测试可注入验证码发送替身
   const ctx = { db, tokens };
 
   const app = express();
@@ -164,6 +169,18 @@ function createApp(options = {}) {
     const token = issueToken(tokens, user.id);
     res.status(201).json({ token, user, profile_completed: isProfileComplete(user) });
   });
+
+  // 手机号 + 短信验证码登录：发送验证码 / 登录（公开接口）
+  app.use(
+    '/api/auth',
+    createPhoneAuthRouter({
+      db,
+      tokens,
+      sms,
+      isProfileComplete,
+      limits: options.smsLimits,
+    })
+  );
 
   // 其余 /api 接口全部需要鉴权
   app.use('/api', createAuthMiddleware(ctx));
